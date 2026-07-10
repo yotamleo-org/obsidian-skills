@@ -27,6 +27,7 @@ Create and edit valid Obsidian Flavored Markdown. Obsidian extends CommonMark an
 [[Note Name#^block-id]]                Link to block
 [[#Heading in same note]]              Same-note heading link
 ```
+Inside Markdown tables, escape wikilink alias pipes as `[[Note\|Alias]]` so the alias separator is not parsed as a table cell delimiter.
 
 Define a block ID by appending `^block-id` to any paragraph:
 
@@ -100,7 +101,7 @@ See [PROPERTIES.md](references/PROPERTIES.md) for all property types, tag syntax
 #nested/tag             Nested tag with hierarchy
 ```
 
-Tags can contain letters, numbers (not first character), underscores, hyphens, and forward slashes. Tags can also be defined in frontmatter under the `tags` property.
+Tags can contain letters, numbers, underscores, hyphens, and forward slashes, but must include at least one non-numerical character (`#1984` is invalid, `#1984book` is valid). Tags can also be defined in frontmatter under the `tags` property.
 
 ## Comments
 
