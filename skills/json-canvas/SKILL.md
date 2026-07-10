@@ -92,6 +92,16 @@ Nodes are objects placed on the canvas. Array order determines z-index: first no
 
 **Newline pitfall**: Use `\n` for line breaks in JSON strings. Do **not** use the literal `\\n` -- Obsidian renders that as the characters `\` and `n`.
 
+**Quote pitfall**: Escape double quotes inside JSON string values as `\"`. Unescaped quotes produce invalid JSON that Obsidian cannot render:
+
+```json
+// ❌ Invalid — unescaped quotes break JSON syntax
+"text": "She said "hello world""
+
+// ✅ Valid — quotes escaped
+"text": "She said \"hello world\""
+```
+
 ### File Nodes
 
 | Attribute | Required | Type | Description |
@@ -109,6 +119,16 @@ Nodes are objects placed on the canvas. Array order determines z-index: first no
   "height": 300,
   "file": "Attachments/diagram.png"
 }
+```
+
+**File path pitfall**: If a file name contains double quotes (e.g. `He said "hello".md`), hand-writing the JSON will produce invalid output. Use a shell command with `json.dump` to build the canvas safely:
+
+```bash
+python3 -c "
+import json
+canvas = {'nodes': [{'id': 'abc1', 'type': 'file', 'x': 0, 'y': 0, 'width': 400, 'height': 300, 'file': 'He said \"hello\".md'}], 'edges': []}
+print(json.dumps(canvas, ensure_ascii=False))
+" > my.canvas
 ```
 
 ### Link Nodes
@@ -219,6 +239,8 @@ Generate 16-character lowercase hexadecimal strings (64-bit random value):
 | File preview | 300-500 | 200-400 |
 | Link preview | 250-400 | 100-200 |
 
+> For CJK (Chinese/Japanese/Korean) text, increase suggested widths by approximately 1.5x — CJK characters are roughly twice as wide as Latin characters and need more horizontal space to avoid awkward line breaks.
+
 ## Validation Checklist
 
 After creating or editing a canvas file, verify:
@@ -232,7 +254,7 @@ After creating or editing a canvas file, verify:
 7. Color presets are `"1"` through `"6"` or valid hex (e.g., `"#FF0000"`)
 8. JSON is valid and parseable
 
-If validation fails, check for duplicate IDs, dangling edge references, or malformed JSON strings (especially unescaped newlines in text content).
+If validation fails, check for duplicate IDs, dangling edge references, or malformed JSON strings (especially unescaped double quotes or newlines in text content).
 
 ## Complete Examples
 
